@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3>Hello</h3>
+<img id="img-of-the-day">
+<form method="post" th:object="${newComment}">
+    <label><h3>Author: </h3></label>
+    <br>
+    <input type="text" th:field="*{author}">
+    <br>
+    <label><h3>Comment: </h3></label>
+    <br>
+    <textarea th:field="*{content}">
+    </textarea>
+    <br>
+    <input type="submit" value="Comment">
+</form>
+<div th:each="row : ${listComment}">
+    <h3 th:text="${row.getContent()}"></h3>
+    <p th:text="*{row.getLikes()}"></p> <a th:href="@{/increment/{id}(id = ${row.getId()})}">Like</a>
+</div>
+<div>
+    <a th:href="@{'/'(page=${listComment.number - 1})}" th:if="${listComment.hasPrevious()}">Previous</a>
+    <span th:text="${listComment.number + 1}"></span>/<span th:text="${listComment.totalPages}"></span>
+    <a th:href="@{'/'(page=${listComment.number + 1})}" th:if="${listComment.hasNext()}">Next</a>
+</div>
+<script>
+    let query = 'https://api.nasa.gov/planetary/apod?api_key=6cqfyf2Yg4deWR25XKfxyRm71duJOAs0cIpYNH9i';
+    let request = new XMLHttpRequest();
+    request.open('GET', query);
+    request.onload = function() {
+        if (request.status === 200) {
+            let response = JSON.parse(request.responseText);
+            document.getElementById('img-of-the-day').setAttribute('src', response.url);
+        }
+    };
+    request.send();
+</script>
+</body>
+</html>
